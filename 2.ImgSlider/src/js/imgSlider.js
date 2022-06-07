@@ -7,11 +7,31 @@ export default class ImgSlider {
 
   #prevBtn;
 
-  #counter = 0;
+  #slidNum = 0;
+
+  #slidwidth = 0;
+
+  #currentPosition = 0;
 
   constructor() {
     this.#assignElement();
+    this.initSlidNumber();
+    this.initSlidWidth();
+    this.initSlidersWidth();
     this.#addEvent();
+  }
+
+  // html을 보고 동적으로 이미지의 갯수, 너비값 초기화하여 사용
+  initSlidNumber() {
+    this.#slidNum = this.#slider.querySelectorAll('li').length;
+  }
+
+  initSlidWidth() {
+    this.#slidwidth = this.#sliderWrapper.clientWidth;
+  }
+
+  initSlidersWidth() {
+    this.#slider.style.width = `${this.#slidNum * this.#slidwidth}px`;
   }
 
   #assignElement() {
@@ -22,16 +42,20 @@ export default class ImgSlider {
   }
 
   #addEvent() {
-    this.#nextBtn.addEventListener('click', () => {
-      this.#counter += 1;
-      if (this.#counter > 6) this.#counter = 0;
-      this.#slider.style.left = `${this.#counter * -1000}px`;
-    });
+    this.#nextBtn.addEventListener('click', this.moveToRight);
 
-    this.#prevBtn.addEventListener('click', () => {
-      this.#counter -= 1;
-      if (this.#counter < 0) this.#counter = 6;
-      this.#slider.style.left = `${this.#counter * -1000}px`;
-    });
+    this.#prevBtn.addEventListener('click', this.moveToLeft);
   }
+
+  moveToRight = () => {
+    this.#currentPosition += 1;
+    if (this.#currentPosition === this.#slidNum) this.#currentPosition = 0;
+    this.#slider.style.left = `${this.#currentPosition * -1000}px`;
+  };
+
+  moveToLeft = () => {
+    this.#currentPosition -= 1;
+    if (this.#currentPosition < 0) this.#currentPosition = this.#slidNum - 1;
+    this.#slider.style.left = `${this.#currentPosition * -1000}px`;
+  };
 }
