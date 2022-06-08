@@ -56,7 +56,8 @@ export default class ImgSlider {
     this.#slider = this.#sliderWrapper.querySelector('#slider');
     this.#nextBtn = this.#sliderWrapper.querySelector('#next');
     this.#prevBtn = this.#sliderWrapper.querySelector('#previous');
-    this.#indicatorWrapper = document.querySelector('#indicator-wrap');
+    this.#indicatorWrapper =
+      this.#sliderWrapper.querySelector('#indicator-wrap');
   }
 
   #addEvent() {
@@ -68,25 +69,29 @@ export default class ImgSlider {
   moveToIndicator = event => {
     const { target } = event;
     if (target.nodeName !== 'LI') return;
-    this.#indicatorList[this.#currentPosition].classList.remove('active');
     this.#currentPosition = Number(target.dataset.num);
-    target.classList.add('active');
-    this.#slider.style.left = `${this.#currentPosition * -1000}px`;
+    this.#slider.style.left = `${this.#currentPosition * -this.#slidwidth}px`;
+    this.updateIndicator();
   };
 
   moveToRight = () => {
-    this.#indicatorList[this.#currentPosition].classList.remove('active');
     this.#currentPosition += 1;
     if (this.#currentPosition === this.#slidNum) this.#currentPosition = 0;
-    this.#slider.style.left = `${this.#currentPosition * -1000}px`;
-    this.#indicatorList[this.#currentPosition].classList.add('active');
+    this.#slider.style.left = `${this.#currentPosition * -this.#slidwidth}px`;
+    this.updateIndicator();
   };
 
   moveToLeft = () => {
-    this.#indicatorList[this.#currentPosition].classList.remove('active');
     this.#currentPosition -= 1;
     if (this.#currentPosition < 0) this.#currentPosition = this.#slidNum - 1;
-    this.#slider.style.left = `${this.#currentPosition * -1000}px`;
+    this.#slider.style.left = `${this.#currentPosition * -this.#slidwidth}px`;
+    this.updateIndicator();
+  };
+
+  updateIndicator = () => {
+    this.#indicatorWrapper
+      .querySelector('ul > li.active')
+      .classList.remove('active');
     this.#indicatorList[this.#currentPosition].classList.add('active');
   };
 }
