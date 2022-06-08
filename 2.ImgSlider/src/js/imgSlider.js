@@ -7,6 +7,10 @@ export default class ImgSlider {
 
   #prevBtn;
 
+  #indicatorWrapper;
+
+  #indicatorList;
+
   #slidNum = 0;
 
   #slidwidth = 0;
@@ -18,6 +22,7 @@ export default class ImgSlider {
     this.initSlidNumber();
     this.initSlidWidth();
     this.initSlidersWidth();
+    this.initIndicator();
     this.#addEvent();
   }
 
@@ -34,28 +39,54 @@ export default class ImgSlider {
     this.#slider.style.width = `${this.#slidNum * this.#slidwidth}px`;
   }
 
+  initIndicator() {
+    const ulEl = document.createElement('ul');
+    for (let i = 0; i < this.#slidNum; i += 1) {
+      const indicator = document.createElement('li');
+      if (i === this.#currentPosition) indicator.classList.add('active');
+      indicator.dataset.num = i;
+      ulEl.appendChild(indicator);
+    }
+    this.#indicatorWrapper.appendChild(ulEl);
+    this.#indicatorList = ulEl.childNodes;
+  }
+
   #assignElement() {
     this.#sliderWrapper = document.querySelector('#slider-wrap');
     this.#slider = this.#sliderWrapper.querySelector('#slider');
     this.#nextBtn = this.#sliderWrapper.querySelector('#next');
     this.#prevBtn = this.#sliderWrapper.querySelector('#previous');
+    this.#indicatorWrapper = document.querySelector('#indicator-wrap');
   }
 
   #addEvent() {
     this.#nextBtn.addEventListener('click', this.moveToRight);
-
     this.#prevBtn.addEventListener('click', this.moveToLeft);
+    this.#indicatorWrapper.addEventListener('click', this.moveToIndicator);
   }
 
-  moveToRight = () => {
-    this.#currentPosition += 1;
-    if (this.#currentPosition === this.#slidNum) this.#currentPosition = 0;
+  moveToIndicator = event => {
+    const { target } = event;
+    if (target.nodeName !== 'LI') return;
+    this.#indicatorList[this.#currentPosition].classList.remove('active');
+    this.#currentPosition = Number(target.dataset.num);
+    target.classList.add('active');
     this.#slider.style.left = `${this.#currentPosition * -1000}px`;
   };
 
+  moveToRight = () => {
+    this.#indicatorList[this.#currentPosition].classList.remove('active');
+    this.#currentPosition += 1;
+    if (this.#currentPosition === this.#slidNum) this.#currentPosition = 0;
+    this.#slider.style.left = `${this.#currentPosition * -1000}px`;
+    this.#indicatorList[this.#currentPosition].classList.add('active');
+  };
+
   moveToLeft = () => {
+    this.#indicatorList[this.#currentPosition].classList.remove('active');
     this.#currentPosition -= 1;
     if (this.#currentPosition < 0) this.#currentPosition = this.#slidNum - 1;
     this.#slider.style.left = `${this.#currentPosition * -1000}px`;
+    this.#indicatorList[this.#currentPosition].classList.add('active');
   };
 }
