@@ -11,6 +11,12 @@ export default class ImgSlider {
 
   #indicatorList;
 
+  #controlWrapper;
+
+  #autoPlayIntervalID;
+
+  #isPlay = true;
+
   #slidNum = 0;
 
   #slidwidth = 0;
@@ -23,6 +29,7 @@ export default class ImgSlider {
     this.initSlidWidth();
     this.initSlidersWidth();
     this.initIndicator();
+    this.initAutoPlay();
     this.#addEvent();
   }
 
@@ -51,6 +58,15 @@ export default class ImgSlider {
     this.#indicatorList = ulEl.childNodes;
   }
 
+  initAutoPlay() {
+    this.#autoPlayIntervalID = setInterval(() => {
+      this.#currentPosition += 1;
+      if (this.#currentPosition === this.#slidNum) this.#currentPosition = 0;
+      this.#slider.style.left = `${this.#currentPosition * -this.#slidwidth}px`;
+      this.updateIndicator();
+    }, 3000);
+  }
+
   #assignElement() {
     this.#sliderWrapper = document.querySelector('#slider-wrap');
     this.#slider = this.#sliderWrapper.querySelector('#slider');
@@ -58,13 +74,35 @@ export default class ImgSlider {
     this.#prevBtn = this.#sliderWrapper.querySelector('#previous');
     this.#indicatorWrapper =
       this.#sliderWrapper.querySelector('#indicator-wrap');
+    this.#controlWrapper = this.#sliderWrapper.querySelector('#control-wrap');
   }
 
   #addEvent() {
+    this.#sliderWrapper.addEventListener('mouseenter', this.wrapperMouseEnter);
+    this.#sliderWrapper.addEventListener('mouseleave', this.wrapperMouseLeave);
     this.#nextBtn.addEventListener('click', this.moveToRight);
     this.#prevBtn.addEventListener('click', this.moveToLeft);
     this.#indicatorWrapper.addEventListener('click', this.moveToIndicator);
+    this.#controlWrapper.addEventListener('click', this.clickAutoPlayBtn);
   }
+
+  wrapperMouseEnter = () => {
+    this.stopAutoPlay();
+  };
+
+  wrapperMouseLeave = () => {
+    this.startAutoPlay();
+  };
+
+  clickAutoPlayBtn = () => {
+    this.#isPlay = [...this.#controlWrapper.classList].includes('play');
+    this.#controlWrapper.className = this.#isPlay
+      ? 'control-wrap pause'
+      : 'control-wrap play';
+    this.#isPlay = !this.#isPlay;
+    if (!this.#isPlay) this.stopAutoPlay();
+    else this.startAutoPlay();
+  };
 
   moveToIndicator = event => {
     const { target } = event;
@@ -93,5 +131,20 @@ export default class ImgSlider {
       .querySelector('ul > li.active')
       .classList.remove('active');
     this.#indicatorList[this.#currentPosition].classList.add('active');
+  };
+
+  stopAutoPlay = () => {
+    clearInterval(this.#autoPlayIntervalID);
+  };
+
+  startAutoPlay = () => {
+    if ([...this.#controlWrapper.classList].includes('pause')) return;
+    clearInterval(this.#autoPlayIntervalID);
+    this.#autoPlayIntervalID = setInterval(() => {
+      this.#currentPosition += 1;
+      if (this.#currentPosition === this.#slidNum) this.#currentPosition = 0;
+      this.#slider.style.left = `${this.#currentPosition * -this.#slidwidth}px`;
+      this.updateIndicator();
+    }, 3000);
   };
 }
