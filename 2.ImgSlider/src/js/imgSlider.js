@@ -17,6 +17,8 @@ export default class ImgSlider {
 
   #isPlay = true;
 
+  #isEnter = false;
+
   #slidNum = 0;
 
   #slidwidth = 0;
@@ -87,15 +89,24 @@ export default class ImgSlider {
   }
 
   wrapperMouseEnter = () => {
+    this.#isEnter = true;
     this.stopAutoPlay();
+    this.clickAutoPlayBtn();
   };
 
   wrapperMouseLeave = () => {
+    this.#isEnter = false;
     this.startAutoPlay();
+    this.clickAutoPlayBtn();
   };
 
   clickAutoPlayBtn = () => {
     this.#isPlay = [...this.#controlWrapper.classList].includes('play');
+    this.#controlWrapper.className = this.#isEnter
+      ? 'control-wrap pause'
+      : 'control-wrap play';
+    if (this.#isEnter) return;
+
     this.#controlWrapper.className = this.#isPlay
       ? 'control-wrap pause'
       : 'control-wrap play';
