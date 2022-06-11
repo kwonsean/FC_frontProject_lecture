@@ -62,9 +62,7 @@ export default class ImgSlider {
 
   initAutoPlay() {
     this.#autoPlayIntervalID = setInterval(() => {
-      this.#currentPosition += 1;
-      if (this.#currentPosition === this.#slidNum) this.#currentPosition = 0;
-      this.#slider.style.left = `${this.#currentPosition * -this.#slidwidth}px`;
+      this.moveToRight();
       this.updateIndicator();
     }, 3000);
   }
