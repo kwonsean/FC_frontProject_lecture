@@ -35,9 +35,7 @@ export default class DatePicker {
     this.year = this.today.getFullYear();
     this.monthNum = this.today.getMonth() + 1;
     this.date = this.today.getDate();
-    this.month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-      this.today,
-    );
+    this.month = this.getMonthString(this.monthNum);
     this.dateInputEl.textContent = `${this.year}/${this.monthNum}/${this.date}`;
     this.monthEl.querySelector('#content').textContent = this.month;
   }
@@ -72,16 +70,40 @@ export default class DatePicker {
   addEvent() {
     this.dateInputEl.addEventListener('click', this.toggleActive);
     this.datesEl.addEventListener('click', this.clickDates);
+    this.monthEl.addEventListener('click', this.clickArrow);
   }
+
+  clickArrow = e => {
+    if (e.target.id === 'prev') {
+      this.monthNum -= 1;
+      this.monthEl.querySelector('#content').textContent = this.getMonthString(
+        this.monthNum,
+      );
+    } else if (e.target.id === 'next') {
+      this.monthNum += 1;
+      this.monthEl.querySelector('#content').textContent = this.getMonthString(
+        this.monthNum,
+      );
+    }
+  };
 
   clickDates = e => {
     if (e.target.classList.contains('date')) {
       this.datesEl.querySelector('.selected')?.classList.remove('selected');
       e.target.classList.add('selected');
+      this.dateInputEl.textContent = `${this.year}/${this.monthNum}/${e.target.textContent}`;
     }
   };
 
   toggleActive = () => {
     this.calendar.classList.toggle('active');
+  };
+
+  getMonthString = month => {
+    const date = new Date(0, month - 1);
+    const monthString = new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+    }).format(date);
+    return monthString;
   };
 }
