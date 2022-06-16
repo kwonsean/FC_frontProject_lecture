@@ -41,9 +41,13 @@ export default class DatePicker {
   }
 
   initDate() {
-    this.endDate = new Date(this.year, this.monthNum, 0).getDate();
     this.firstDay = new Date(this.year, this.monthNum - 1, 1).getDay();
+    this.endDate = new Date(this.year, this.monthNum, 0).getDate();
+    this.drawDate();
+  }
 
+  drawDate() {
+    this.datesEl.innerHTML = '';
     const fragmentEl = document.createDocumentFragment();
     for (let i = 1; i <= this.endDate; i += 1) {
       const date = document.createElement('div');
@@ -52,7 +56,12 @@ export default class DatePicker {
       if (i === 1) date.style.gridColumnStart = this.firstDay + 1;
       if (7 - this.firstDay === i % 7) date.style.color = 'blue';
       else if (8 - this.firstDay === i % 7) date.style.color = 'red';
-      if (i === this.date) date.classList.add('today');
+      if (
+        i === this.date &&
+        this.year === this.today.getFullYear() &&
+        this.monthNum === this.today.getMonth() + 1
+      )
+        date.classList.add('today');
       fragmentEl.appendChild(date);
     }
 
@@ -73,6 +82,12 @@ export default class DatePicker {
     this.monthEl.addEventListener('click', this.clickArrow);
   }
 
+  updateDate() {
+    this.firstDay = new Date(this.year, this.monthNum - 1, 1).getDay();
+    this.endDate = new Date(this.year, this.monthNum, 0).getDate();
+    this.drawDate();
+  }
+
   clickArrow = e => {
     if (e.target.id === 'prev') {
       this.monthNum -= 1;
@@ -85,6 +100,7 @@ export default class DatePicker {
         this.monthNum,
       );
     }
+    this.updateDate();
   };
 
   clickDates = e => {
@@ -100,7 +116,10 @@ export default class DatePicker {
   };
 
   getMonthString = month => {
-    const date = new Date(0, month - 1);
+    const updatedYear = Math.floor(month / 12);
+    this.monthNum = Math.abs(month % 12);
+    this.year += updatedYear;
+    const date = new Date(this.year + updatedYear, month - 1);
     const monthString = new Intl.DateTimeFormat('en-US', {
       month: 'long',
     }).format(date);
