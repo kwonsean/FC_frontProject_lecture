@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-return-assign */
@@ -52,7 +53,9 @@ class DatePicker2 {
 
   constructor() {
     this.initCalendarDate();
+    this.initSelectedDate();
     this.assignElement();
+    this.setDateInput();
     this.addEvent();
   }
 
@@ -69,6 +72,15 @@ class DatePicker2 {
     };
   }
 
+  initSelectedDate() {
+    this.selectedDate = { ...this.calendarDate };
+  }
+
+  setDateInput() {
+    this.dateInputEl.textContent = this.formateDate(this.selectedDate.data);
+    this.dateInputEl.dataset.value = this.selectedDate.data;
+  }
+
   assignElement() {
     this.datePickerEl = document.getElementById('date-picker');
     this.dateInputEl = this.datePickerEl.querySelector('#date-input');
@@ -83,9 +95,14 @@ class DatePicker2 {
   addEvent() {
     this.dateInputEl.addEventListener('click', this.toggleActive);
     this.monthEl.addEventListener('click', this.clickArrow);
+    this.dateEl.addEventListener('click', this.onClickSelectedDate);
   }
 
   toggleActive = () => {
+    // active가 꺼질때 선택된 날짜값이 세팅되도록
+    if (!this.calendarEl.classList.contains('avtive')) {
+      this.calendarDate = { ...this.selectedDate };
+    }
     this.calendarEl.classList.toggle('active');
     this.updateMonth();
     this.updateDates();
@@ -121,6 +138,7 @@ class DatePicker2 {
     this.colorSaturday();
     this.colorSunday();
     this.colorToday();
+    this.markSelectedDate();
   };
 
   colorSaturday() {
@@ -161,6 +179,17 @@ class DatePicker2 {
     }
   }
 
+  markSelectedDate = () => {
+    if (
+      this.selectedDate.year === this.calendarDate.year &&
+      this.selectedDate.month === this.calendarDate.month
+    ) {
+      this.calendarEl
+        .querySelector(`[data-date='${this.selectedDate.date}']`)
+        .classList.add('selected');
+    }
+  };
+
   clickArrow = e => {
     if (e.target.id === 'prev') {
       this.calendarDate.month -= 1;
@@ -180,6 +209,39 @@ class DatePicker2 {
       this.updateDates();
     }
   };
+
+  onClickSelectedDate = e => {
+    const { target } = e;
+    if (target.dataset.date) {
+      this.dateEl.querySelector('.selected')?.classList.remove('selected');
+      target.classList.add('selected');
+      this.selectedDate = {
+        data: new Date(
+          this.calendarDate.year,
+          this.calendarDate.month,
+          target.dataset.date,
+        ),
+        year: this.calendarDate.year,
+        month: this.calendarDate.month,
+        date: target.dataset.date,
+      };
+      this.setDateInput();
+      this.calendarEl.classList.remove('active');
+    }
+  };
+
+  formateDate(dateInfo) {
+    let date = dateInfo.getDate();
+    if (date < 10) {
+      date = String(date).padStart(2, '0');
+    }
+    let month = dateInfo.getMonth() + 1;
+    if (month < 10) {
+      month = String(month).padStart(2, '0');
+    }
+    const year = dateInfo.getFullYear();
+    return `${year}/${month}/${date}`;
+  }
 }
 
 const datePicker2 = new DatePicker2();
