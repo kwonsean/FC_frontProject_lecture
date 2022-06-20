@@ -1,0 +1,42 @@
+.btn {
+  width: 48px;
+  height: 48px;
+  background-color: #2699fb;
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.btn:active {
+  background-color: #007feb;
+}
+
+.btn-lg {
+  width: 100px;
+}
+
+.row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.row:last-child {
+  margin: 0;
+}
+
+.input {
+  box-sizing: border-box;
+  width: 204px;
+  height: 48px;
+  outline: none;
+  border: solid 1px #bce0fd;
+  color: #007feb;
+  font-size: 14px;
+  padding: 0px 12px;
+}
