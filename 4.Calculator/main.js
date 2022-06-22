@@ -43,12 +43,19 @@ function save() {
   }
 }
 
-$calculator.addEventListener("click", (e) => inputNum(e));
+$calculator.addEventListener("click", (e) => handleClickCalculator(e));
 
-function inputNum(e) {
-  if (e.target === undefined || e.target.dataset.num === undefined) return;
-  let num = e.target.dataset.num;
+function handleClickCalculator(e) {
+  if (e.target === undefined) return;
 
+  if (e.target.dataset.num) inputNum(e.target.dataset.num);
+
+  if (e.target.dataset.oper) inputOper(e.target.dataset.oper);
+
+  if (e.target.dataset.equ) inputEqu();
+}
+
+function inputNum(num) {
   if (oper === null) {
     if (left === null) {
       left = `${num}`;
