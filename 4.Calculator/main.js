@@ -4,6 +4,8 @@ let left = null,
   res = false,
   resValue = null;
 
+const $calculator = document.getElementById("calculator");
+
 function save() {
   const inp = document.querySelector("#top-inp");
   let value = "";
@@ -41,7 +43,12 @@ function save() {
   }
 }
 
-function inputNum(num) {
+$calculator.addEventListener("click", (e) => inputNum(e));
+
+function inputNum(e) {
+  if (e.target === undefined || e.target.dataset.num === undefined) return;
+  let num = e.target.dataset.num;
+
   if (oper === null) {
     if (left === null) {
       left = `${num}`;
