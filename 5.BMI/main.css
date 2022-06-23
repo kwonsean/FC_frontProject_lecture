@@ -1,0 +1,46 @@
+.row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+input {
+  box-sizing: border-box;
+  width: 204px;
+  height: 48px;
+  border: solid 1px #48aeff;
+  color: #007feb;
+  font-size: 14px;
+  padding: 0px 12px;
+}
+
+input::placeholder {
+  color: #94d0ff;
+}
+
+.form-input {
+  display: flex;
+  flex-direction: column;
+}
+.form-input label {
+  font-size: 12px;
+  color: #48aeff;
+}
+
+.btn {
+  width: 148px;
+  height: 48px;
+  background-color: #2699fb;
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.btn:active {
+  background-color: #007feb;
+}

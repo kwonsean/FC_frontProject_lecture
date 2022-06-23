@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script defer src="main.js"></script>
+  </head>
+  <body>
+    <form onsubmit="handleSubmit(event)">
+      <div class="row">
+        <div class="form-input">
+          <label for="weight">몸무게(kg)</label>
+          <input type="number" placeholder="kg 단위" id="weight" name="weight" />
+        </div>
+
+        <div class="form-input">
+          <label for="height">신장(cm)</label>
+          <input type="number" placeholder="cm 단위" id="height" name="height" />
+        </div>
+        <button type="submit" class="btn">결과</button>
+      </div>
+    </form>
+  </body>
+</html>
