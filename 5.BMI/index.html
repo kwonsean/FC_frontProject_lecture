@@ -9,7 +9,7 @@
     <script defer src="main.js"></script>
   </head>
   <body>
-    <form onsubmit="handleSubmit(event)">
+    <form id="bmi-form">
       <div class="row">
         <div class="form-input">
           <label for="weight">몸무게(kg)</label>
@@ -21,6 +21,21 @@
           <input type="number" placeholder="cm 단위" id="height" name="height" />
         </div>
         <button type="submit" class="btn">결과</button>
+      </div>
+
+      <div id="result">
+        <div>
+          <meter id="meter" min="10" max="30" optimum="22" low="18.5" high="25"></meter>
+        </div>
+
+        <div>
+          <div>당신의 BMI는 <span id="bmi"></span> 입니다.</div>
+          <div><span id="state"></span> 입니다.</div>
+        </div>
+
+        <div>
+          <button type="reset" class="btn reset-btn">RESET</button>
+        </div>
       </div>
     </form>
   </body>

@@ -44,3 +44,28 @@ input::placeholder {
 .btn:active {
   background-color: #007feb;
 }
+
+#result {
+  width: 588px;
+  display: none;
+  flex-direction: column;
+  margin-top: 24px;
+  gap: 24px;
+  color: #48aeff;
+  text-align: center;
+}
+
+#result > div:nth-child(2) > div:first-child {
+  font-size: 32px;
+}
+#result > div:nth-child(2) > div:last-child {
+  font-size: 24px;
+}
+
+#meter {
+  width: 100%;
+}
+
+.reset-btn {
+  margin: 0 auto;
+}
