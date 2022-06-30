@@ -4,9 +4,14 @@ class DrawingBoard {
 
   IsMouseDown = false;
 
+  backgroundColor = '#fff';
+
+  eraserColor = '#fff';
+
   constructor() {
     this.assginElement();
     this.initContext();
+    this.initCanvasBgColor();
     this.addEvent();
   }
 
@@ -20,10 +25,17 @@ class DrawingBoard {
     this.brushSizeInputEl = this.brushPanelEl.querySelector('#brushSize');
     this.brushSizePreviewEl =
       this.brushPanelEl.querySelector('#brushSizePreview');
+    this.eraserEl = this.toolbarEl.querySelector('#eraser');
   }
 
   initContext() {
     this.context = this.canvasEl.getContext('2d');
+  }
+
+  // 하얀색 배경을 가지는 직사각형을 그려줌
+  initCanvasBgColor() {
+    this.context.fillStyle = this.backgroundColor;
+    this.context.fillRect(0, 0, this.convasEl.width, this.canvasEl.height);
   }
 
   addEvent() {
@@ -34,6 +46,7 @@ class DrawingBoard {
     this.canvasEl.addEventListener('mouseout', this.onMouseOut);
     this.brushSizeInputEl.addEventListener('input', this.onChangeBrushSize);
     this.colorPickerEl.addEventListener('input', this.onChangeColor);
+    this.eraserEl.addEventListener('click', this.onClickEraser);
   }
 
   onClickBrush = event => {
@@ -43,6 +56,7 @@ class DrawingBoard {
     // 캔버스의 커서만을 스타일링
     this.canvasEl.style.cursor = isActive ? 'default' : 'crosshair';
     this.brushEl.classList.toggle('active');
+    this.eraserEl.classList.remove('active');
   };
 
   onMouseDown = event => {
@@ -52,8 +66,13 @@ class DrawingBoard {
     this.context.beginPath();
     this.context.moveTo(currentPosition.x, currentPosition.y);
     this.context.lineCap = 'round';
-    this.context.strokeStyle = this.colorPickerEl.value;
-    this.context.lineWidth = this.brushSizeInputEl.value;
+    if (this.MODE === 'BRUSH') {
+      this.context.strokeStyle = this.colorPickerEl.value;
+      this.context.lineWidth = this.brushSizeInputEl.value;
+    } else if (this.MODE === 'ERASER') {
+      this.context.strokeStyle = this.eraserColor;
+      this.context.lineWidth = 50;
+    }
   };
 
   onMouseMove = event => {
@@ -88,6 +107,15 @@ class DrawingBoard {
 
   onChangeColor = event => {
     this.brushSizePreviewEl.style.backgroundColor = event.target.value;
+  };
+
+  onClickEraser = event => {
+    const isActive = event.currentTarget.classList.contains('active');
+    this.MODE = isActive ? 'NONE' : 'ERASER';
+    this.canvasEl.style.cursor = isActive ? 'default' : 'crosshair';
+    this.brushPanelEl.classList.add('hide');
+    this.eraserEl.classList.toggle('active');
+    this.brushEl.classList.remove('active');
   };
 }
 
