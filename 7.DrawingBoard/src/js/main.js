@@ -8,6 +8,10 @@ class DrawingBoard {
 
   eraserColor = '#fff';
 
+  IsNavigatorVisible;
+
+  imgHistoryArr = [];
+
   constructor() {
     this.assginElement();
     this.initContext();
@@ -30,6 +34,7 @@ class DrawingBoard {
     this.navigatorPreviewWrapperEl = this.containerEl.querySelector('#imgNav');
     this.navigatorPreviewImgEl =
       this.navigatorPreviewWrapperEl.querySelector('#canvasImg');
+    this.undoEl = this.toolbarEl.querySelector('#undo');
   }
 
   initContext() {
@@ -52,6 +57,7 @@ class DrawingBoard {
     this.colorPickerEl.addEventListener('input', this.onChangeColor);
     this.eraserEl.addEventListener('click', this.onClickEraser);
     this.navigatorEl.addEventListener('click', this.onCLickNavigator);
+    this.undoEl.addEventListener('click', this.onCLickUndo);
   }
 
   onClickBrush = event => {
@@ -78,6 +84,7 @@ class DrawingBoard {
       this.context.strokeStyle = this.eraserColor;
       this.context.lineWidth = 50;
     }
+    this.saveHistory();
   };
 
   onMouseMove = event => {
@@ -126,14 +133,47 @@ class DrawingBoard {
   };
 
   onCLickNavigator = event => {
+    this.IsNavigatorVisible = !event.currentTarget.classList.contains('active');
     event.currentTarget.classList.toggle('active');
     this.navigatorPreviewWrapperEl.classList.toggle('hide');
     this.updateNavigator();
   };
 
   updateNavigator() {
+    if (this.IsNavigatorVisible) return;
     // 캔버스의 사진 정보를 URL로 변환 this.canvasEl.toDataURL()
     this.navigatorPreviewImgEl.src = this.canvasEl.toDataURL();
+  }
+
+  onCLickUndo = () => {
+    if (this.imgHistoryArr.length === 0) {
+      // eslint-disable-next-line no-alert
+      alert('더이상 되돌릴 수 없어 그러니 소중히 했어야지');
+      return;
+    }
+    const previousDataUrl = this.imgHistoryArr.pop();
+    const previousImg = new Image();
+    previousImg.onload = () => {
+      this.context.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+      this.context.drawImage(
+        previousImg,
+        0,
+        0,
+        this.canvasEl.width,
+        this.canvasEl.height,
+        0,
+        0,
+        this.canvasEl.width,
+        this.canvasEl.height,
+      );
+    };
+    previousImg.src = previousDataUrl;
+  };
+
+  saveHistory() {
+    // 기록을 최대 5개만 저장함
+    if (this.imgHistoryArr.length > 4) this.imgHistoryArr.shift();
+    this.imgHistoryArr.push(this.canvasEl.toDataURL());
   }
 }
 
