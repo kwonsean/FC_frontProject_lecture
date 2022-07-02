@@ -26,6 +26,10 @@ class DrawingBoard {
     this.brushSizePreviewEl =
       this.brushPanelEl.querySelector('#brushSizePreview');
     this.eraserEl = this.toolbarEl.querySelector('#eraser');
+    this.navigatorEl = this.toolbarEl.querySelector('#navigator');
+    this.navigatorPreviewWrapperEl = this.containerEl.querySelector('#imgNav');
+    this.navigatorPreviewImgEl =
+      this.navigatorPreviewWrapperEl.querySelector('#canvasImg');
   }
 
   initContext() {
@@ -35,7 +39,7 @@ class DrawingBoard {
   // 하얀색 배경을 가지는 직사각형을 그려줌
   initCanvasBgColor() {
     this.context.fillStyle = this.backgroundColor;
-    this.context.fillRect(0, 0, this.convasEl.width, this.canvasEl.height);
+    this.context.fillRect(0, 0, this.canvasEl.width, this.canvasEl.height);
   }
 
   addEvent() {
@@ -47,6 +51,7 @@ class DrawingBoard {
     this.brushSizeInputEl.addEventListener('input', this.onChangeBrushSize);
     this.colorPickerEl.addEventListener('input', this.onChangeColor);
     this.eraserEl.addEventListener('click', this.onClickEraser);
+    this.navigatorEl.addEventListener('click', this.onCLickNavigator);
   }
 
   onClickBrush = event => {
@@ -55,7 +60,7 @@ class DrawingBoard {
     this.brushPanelEl.classList.toggle('hide', isActive);
     // 캔버스의 커서만을 스타일링
     this.canvasEl.style.cursor = isActive ? 'default' : 'crosshair';
-    this.brushEl.classList.toggle('active');
+    event.currentTarget.classList.toggle('active');
     this.eraserEl.classList.remove('active');
   };
 
@@ -85,11 +90,13 @@ class DrawingBoard {
   onMouseUp = () => {
     if (this.MODE === 'NONE') return;
     this.IsMouseDown = false;
+    this.updateNavigator();
   };
 
   onMouseOut = () => {
     if (this.MODE === 'NONE') return;
     this.IsMouseDown = false;
+    this.updateNavigator();
   };
 
   getMousePosition = event => {
@@ -114,9 +121,20 @@ class DrawingBoard {
     this.MODE = isActive ? 'NONE' : 'ERASER';
     this.canvasEl.style.cursor = isActive ? 'default' : 'crosshair';
     this.brushPanelEl.classList.add('hide');
-    this.eraserEl.classList.toggle('active');
+    event.currentTarget.classList.toggle('active');
     this.brushEl.classList.remove('active');
   };
+
+  onCLickNavigator = event => {
+    event.currentTarget.classList.toggle('active');
+    this.navigatorPreviewWrapperEl.classList.toggle('hide');
+    this.updateNavigator();
+  };
+
+  updateNavigator() {
+    // 캔버스의 사진 정보를 URL로 변환 this.canvasEl.toDataURL()
+    this.navigatorPreviewImgEl.src = this.canvasEl.toDataURL();
+  }
 }
 
 const drawingBoard = new DrawingBoard();
