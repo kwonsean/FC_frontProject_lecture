@@ -195,4 +195,5 @@ class DrawingBoard {
   };
 }
 
+// eslint-disable-next-line no-unused-vars
 const drawingBoard = new DrawingBoard();
