@@ -36,6 +36,7 @@ class DrawingBoard {
       this.navigatorPreviewWrapperEl.querySelector('#canvasImg');
     this.undoEl = this.toolbarEl.querySelector('#undo');
     this.clearEl = this.toolbarEl.querySelector('#clear');
+    this.downLoadLinkEl = this.toolbarEl.querySelector('#download');
   }
 
   initContext() {
@@ -60,6 +61,7 @@ class DrawingBoard {
     this.navigatorEl.addEventListener('click', this.onCLickNavigator);
     this.undoEl.addEventListener('click', this.onCLickUndo);
     this.clearEl.addEventListener('click', this.onClickClear);
+    this.downLoadLinkEl.addEventListener('click', this.onClickDownload);
   }
 
   onClickBrush = event => {
@@ -184,6 +186,12 @@ class DrawingBoard {
     // 코드를 많이 나누어 두면 재사용에 유용
     this.initCanvasBgColor();
     this.updateNavigator();
+  };
+
+  onClickDownload = () => {
+    this.downLoadLinkEl.href = this.canvasEl.toDataURL('image/jpeg', 1);
+    // 다운로드되는 파일명 지정
+    this.downLoadLinkEl.download = 'example.jpeg';
   };
 }
 
