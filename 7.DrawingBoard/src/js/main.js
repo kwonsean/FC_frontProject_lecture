@@ -35,6 +35,7 @@ class DrawingBoard {
     this.navigatorPreviewImgEl =
       this.navigatorPreviewWrapperEl.querySelector('#canvasImg');
     this.undoEl = this.toolbarEl.querySelector('#undo');
+    this.clearEl = this.toolbarEl.querySelector('#clear');
   }
 
   initContext() {
@@ -58,6 +59,7 @@ class DrawingBoard {
     this.eraserEl.addEventListener('click', this.onClickEraser);
     this.navigatorEl.addEventListener('click', this.onCLickNavigator);
     this.undoEl.addEventListener('click', this.onCLickUndo);
+    this.clearEl.addEventListener('click', this.onClickClear);
   }
 
   onClickBrush = event => {
@@ -133,7 +135,7 @@ class DrawingBoard {
   };
 
   onCLickNavigator = event => {
-    this.IsNavigatorVisible = !event.currentTarget.classList.contains('active');
+    this.IsNavigatorVisible = event.currentTarget.classList.contains('active');
     event.currentTarget.classList.toggle('active');
     this.navigatorPreviewWrapperEl.classList.toggle('hide');
     this.updateNavigator();
@@ -175,6 +177,14 @@ class DrawingBoard {
     if (this.imgHistoryArr.length > 4) this.imgHistoryArr.shift();
     this.imgHistoryArr.push(this.canvasEl.toDataURL());
   }
+
+  onClickClear = () => {
+    this.context.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+    this.imgHistoryArr = [];
+    // 코드를 많이 나누어 두면 재사용에 유용
+    this.initCanvasBgColor();
+    this.updateNavigator();
+  };
 }
 
 const drawingBoard = new DrawingBoard();
