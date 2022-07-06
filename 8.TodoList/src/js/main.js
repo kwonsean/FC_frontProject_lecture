@@ -37,6 +37,25 @@ class TodoList {
     this.addTodoList();
   };
 
+  onClickTodoEl = event => {
+    const { currentTarget } = event;
+    const btn = event.target.closest('button');
+    if (btn === null) return;
+    switch (btn.className) {
+      case 'delete-btn':
+        this.deleteTodoList(currentTarget);
+        break;
+      case 'complete-btn':
+        console.log('complete');
+        break;
+      case 'edit-btn':
+        console.log('edit');
+        break;
+      default:
+        break;
+    }
+  };
+
   addTodoList() {
     const todoEl = document.createElement('div');
     todoEl.classList.add('todo');
@@ -44,9 +63,24 @@ class TodoList {
     const todoItemEl = document.createElement('input');
     todoItemEl.classList.add('todo-item');
     todoItemEl.value = this.toDoInputEl.value;
+    this.toDoInputEl.value = '';
+    todoItemEl.readOnly = true;
 
     todoEl.prepend(todoItemEl);
+    todoEl.addEventListener('click', this.onClickTodoEl);
     this.todoListEl.append(todoEl);
+  }
+
+  deleteTodoList(todoEl) {
+    todoEl.classList.add('delete');
+    setTimeout(() => {
+      this.updateTodoList();
+    }, 1000);
+  }
+
+  updateTodoList() {
+    const deletedTodo = this.todoListEl.querySelectorAll('.delete');
+    this.todoListEl.removeChild(deletedTodo[0]);
   }
 }
 
