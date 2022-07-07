@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import '@fortawesome/fontawesome-free/js/all.min';
 import '../scss/style.scss';
 
@@ -36,7 +37,7 @@ class TodoList {
 
   onClickAddBtn = () => {
     if (this.toDoInputEl.value === '') return;
-    this.addTodoList();
+    this.addTodo();
   };
 
   onClickTodoEl = event => {
@@ -45,20 +46,24 @@ class TodoList {
     if (btn === null) return;
     switch (btn.className) {
       case 'delete-btn':
-        this.deleteTodoList(currentTarget);
+        this.deleteTodo(currentTarget);
         break;
       case 'complete-btn':
-        console.log('complete');
+        this.completeTodo(currentTarget);
         break;
       case 'edit-btn':
-        console.log('edit');
+        if (currentTarget.classList.contains('done')) return;
+        this.editTodo(currentTarget);
+        break;
+      case 'save-btn':
+        this.updateTodo(currentTarget);
         break;
       default:
         break;
     }
   };
 
-  addTodoList() {
+  addTodo() {
     const todoEl = document.createElement('div');
     todoEl.classList.add('todo');
     todoEl.innerHTML = this.todoBtnElements;
@@ -73,13 +78,35 @@ class TodoList {
     this.todoListEl.append(todoEl);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  deleteTodoList(todoEl) {
+  deleteTodo(todoEl) {
     todoEl.classList.add('delete');
     todoEl.addEventListener('transitionend', () => {
       todoEl.remove();
     });
   }
+
+  completeTodo(todoEl) {
+    todoEl.classList.toggle('done');
+  }
+
+  editTodo(todoEl) {
+    todoEl.classList.add('edit');
+    const inputEl = todoEl.querySelector('input');
+    inputEl.readOnly = false;
+    inputEl.focus();
+  }
+
+  updateTodo(todoEl) {
+    const inputEl = todoEl.querySelector('input');
+    if (inputEl.value.length === 0) {
+      alert('입력 하시죠!');
+      inputEl.focus();
+    } else {
+      todoEl.classList.remove('edit');
+      inputEl.readOnly = true;
+    }
+  }
 }
 
+// eslint-disable-next-line no-unused-vars
 const todoList = new TodoList();
