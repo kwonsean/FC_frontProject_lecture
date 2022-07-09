@@ -29,10 +29,46 @@ class TodoList {
     this.addBtnEl = this.inputContainerEl.querySelector('#add-btn');
     this.todoContainerEl = document.getElementById('todo-container');
     this.todoListEl = this.todoContainerEl.querySelector('#todo-list');
+    this.radioAreaEl = this.inputContainerEl.querySelector('#radio-area');
+    this.filterRadioBtnEls =
+      this.radioAreaEl.querySelectorAll('input[name=filter]');
   }
 
   addEvent() {
     this.addBtnEl.addEventListener('click', this.onClickAddBtn);
+    this.addRadioBtnEvent();
+  }
+
+  addRadioBtnEvent() {
+    for (const filterRadioBtn of this.filterRadioBtnEls) {
+      filterRadioBtn.addEventListener('click', this.onClickRadioBtn);
+    }
+  }
+
+  onClickRadioBtn = event => {
+    const { target } = event;
+    this.filterTodo(target.value);
+  };
+
+  filterTodo(status) {
+    const todoDivEls = this.todoListEl.querySelectorAll('div.todo');
+    for (const todoDivEl of todoDivEls) {
+      switch (status) {
+        case 'ALL':
+          todoDivEl.style.display = 'flex';
+          break;
+        case 'DONE':
+          todoDivEl.style.display = todoDivEl.classList.contains('done')
+            ? 'flex'
+            : 'none';
+          break;
+        case 'TODO':
+          todoDivEl.style.display = todoDivEl.classList.contains('done')
+            ? 'none'
+            : 'flex';
+          break;
+      }
+    }
   }
 
   onClickAddBtn = () => {
