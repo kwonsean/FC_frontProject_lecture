@@ -47,7 +47,9 @@ class TodoList {
 
   onClickRadioBtn = event => {
     const { target } = event;
-    this.filterTodo(target.value);
+    // 필터링은 이제 주소값이 바뀔때 실행됨
+    // this.filterTodo(target.value);
+    window.location.href = `#/${target.value.toLowerCase()}`;
   };
 
   filterTodo(status) {
@@ -144,5 +146,51 @@ class TodoList {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
+class Router {
+  routes = [];
+  notFoundCallback = () => {};
+
+  addRoute(url, callback) {
+    this.routes.push({ url, callback });
+    return this;
+  }
+
+  checkRoute = () => {
+    const currentRoute = this.routes.find(
+      route => route.url === window.location.hash,
+    );
+    if (!currentRoute) {
+      this.notFoundCallback();
+      return;
+    }
+    currentRoute.callback();
+  };
+
+  init() {
+    window.addEventListener('hashchange', this.checkRoute);
+    if (!window.location.hash) {
+      window.location.hash = '#/';
+    }
+    this.checkRoute();
+  }
+
+  setNotFound(callback) {
+    this.notFoundCallback = callback;
+    return this;
+  }
+}
+
+const router = new Router();
 const todoList = new TodoList();
+const routerCallback = status => () => {
+  todoList.filterTodo(status);
+  document.querySelector(
+    `input[type='radio'][value='${status}']`,
+  ).checked = true;
+};
+router
+  .addRoute('#/all', routerCallback('ALL'))
+  .addRoute('#/todo', routerCallback('TODO'))
+  .addRoute('#/done', routerCallback('DONE'))
+  .setNotFound(routerCallback('ALL'))
+  .init();
