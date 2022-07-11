@@ -18,9 +18,11 @@ class TodoList {
   <i class="fas fa-trash"></i>
 </button>`;
 
-  constructor() {
+  constructor(storage) {
+    this.storage = storage;
     this.assginElement();
     this.addEvent();
+    this.loadSavedData();
   }
 
   assginElement() {
@@ -73,9 +75,21 @@ class TodoList {
     }
   }
 
+  loadSavedData = () => {
+    const todosData = this.storage.getTodos();
+    for (const todoData of todosData) {
+      const { id, content, status } = todoData;
+      this.addTodo(id, content, status);
+    }
+  };
+
   onClickAddBtn = () => {
     if (this.toDoInputEl.value === '') return;
-    this.addTodo();
+
+    const id = Date.now();
+    this.storage.saveTodo(id, this.toDoInputEl.value);
+
+    this.addTodo(id, this.toDoInputEl.value);
   };
 
   onClickTodoEl = event => {
@@ -101,13 +115,22 @@ class TodoList {
     }
   };
 
-  addTodo() {
+  addTodo(id, content, status = null) {
     const todoEl = document.createElement('div');
     todoEl.classList.add('todo');
+    todoEl.dataset.id = id;
+    switch (status) {
+      case 'DONE':
+        todoEl.classList.add('done');
+        break;
+      case 'EDIT':
+        todoEl.classList.add('edit');
+        break;
+    }
     todoEl.innerHTML = this.todoBtnElements;
     const todoItemEl = document.createElement('input');
     todoItemEl.classList.add('todo-item');
-    todoItemEl.value = this.toDoInputEl.value;
+    todoItemEl.value = content;
     this.toDoInputEl.value = '';
     todoItemEl.readOnly = true;
 
@@ -121,10 +144,17 @@ class TodoList {
     todoEl.addEventListener('transitionend', () => {
       todoEl.remove();
     });
+    this.storage.deleteTodo(todoEl.dataset.id);
   }
 
   completeTodo(todoEl) {
     todoEl.classList.toggle('done');
+    const { id } = todoEl.dataset;
+    this.storage.editTodo(
+      id,
+      '',
+      todoEl.classList.contains('done') ? 'DONE' : 'TODO',
+    );
   }
 
   editTodo(todoEl) {
@@ -143,6 +173,9 @@ class TodoList {
       todoEl.classList.remove('edit');
       inputEl.readOnly = true;
     }
+    const { id } = todoEl.dataset;
+    console.log(todoEl);
+    this.storage.editTodo(id, inputEl.value);
   }
 }
 
@@ -180,14 +213,51 @@ class Router {
   }
 }
 
+class Storage {
+  saveTodo(id, todoContent) {
+    const todosData = this.getTodos();
+    todosData.push({ id, content: todoContent, status: 'TODO' });
+    localStorage.setItem('todos', JSON.stringify(todosData));
+  }
+
+  editTodo(id, content, status = 'TODO') {
+    const todoDatas = this.getTodos();
+    const todoIndex = todoDatas.findIndex(todo => todo.id === Number(id));
+    console.log(todoIndex);
+    const targetTodoData = todoDatas[todoIndex];
+    console.log('targetTodoData', targetTodoData);
+    const editedTodoData =
+      content === ''
+        ? { ...targetTodoData, status }
+        : { ...targetTodoData, content };
+    todoDatas.splice(todoIndex, 1, editedTodoData);
+    localStorage.setItem('todos', JSON.stringify(todoDatas));
+  }
+
+  deleteTodo(id) {
+    const todoDatas = this.getTodos();
+    todoDatas.splice(
+      todoDatas.findIndex(todo => todo.id === String(id)),
+      1,
+    );
+    localStorage.setItem('todos', JSON.stringify(todoDatas));
+  }
+
+  getTodos() {
+    const todos = localStorage.getItem('todos');
+    return todos === null ? [] : JSON.parse(todos);
+  }
+}
+
 const router = new Router();
-const todoList = new TodoList();
+const todoList = new TodoList(new Storage());
 const routerCallback = status => () => {
   todoList.filterTodo(status);
   document.querySelector(
     `input[type='radio'][value='${status}']`,
   ).checked = true;
 };
+// return이 다 this이기 때문에 체이닝을 사용 할 수 있음
 router
   .addRoute('#/all', routerCallback('ALL'))
   .addRoute('#/todo', routerCallback('TODO'))

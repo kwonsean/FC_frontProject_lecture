@@ -15,3 +15,22 @@
   이때 심지어 요소를 지울때 `remove()`를 사용하는 것이 아닌 TODO LIST 요소의 delete 클래스를 가지는 요소를 파악하여 `removeChild()`하는 방식으로 구현함. (remove를 몰랐음)
 - `transitionend`를 이용하면 보다 정확하고 (no hard coding) 간편하게 사용 가능
 - [MDN 공식문서](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/transitionend_event)
+
+
+###  `input[type='radio'][value='${status}']`
+- 예시코드
+  ```
+  document.querySelector(
+      `input[type='radio'][value='${status}']`,
+    )
+  ```
+- 요소를 탐색할때 type뿐만 아니라 한번에 여러 조건을 넣어서 탐색도 가능하다.
+
+### hashchange
+- 이벤트 리스너 중 하나로 해쉬가 바뀌면 콜백 실행
+- 단 이벤트를 window에 등록해야한다.
+- 예시코드
+  ```
+  window.addEventListener('hashchange', callBackFnc);
+  ```
+- [MDN 공식문서](https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event)
