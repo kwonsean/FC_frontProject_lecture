@@ -57,9 +57,13 @@ const initalState = {
 
 const PLAY_MUSIC = "musicPlayer/PLAY_MUSIC";
 const STOP_MUSIC = "musicPlayer/STOP_MUSIC";
+const NEXT_MUSIC = "musicPlayer/NEXT_MUSIC";
+const PREV_MUSIC = "musicPlayer/PREV_MUSIC";
 
 export const playMusic = () => ({ type: PLAY_MUSIC });
 export const stopMusic = () => ({ type: STOP_MUSIC });
+export const nextMusic = () => ({ type: NEXT_MUSIC });
+export const prevMusic = () => ({ type: PREV_MUSIC });
 
 export default function musicPlayerReducer(state = initalState, action) {
   switch (action.type) {
@@ -73,6 +77,23 @@ export default function musicPlayerReducer(state = initalState, action) {
       return {
         ...state,
         playing: false,
+      };
+    // 밑에 IDX값 구하는 로직 새롭다. (난 if만 생각해봄..)
+    case NEXT_MUSIC:
+      const nextIdx = (state.currentIndex + 1) % state.playList.length;
+      return {
+        ...state,
+        currentIndex: nextIdx,
+        currentMusicId: state.playList[nextIdx].id,
+      };
+    case PREV_MUSIC:
+      const prevIdx =
+        (state.currentIndex - 1 + state.playList.length) %
+        state.playList.length;
+      return {
+        ...state,
+        currentIndex: prevIdx,
+        currentMusicId: state.playList[prevIdx].id,
       };
     default:
       return state;
