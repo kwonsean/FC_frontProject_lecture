@@ -7,9 +7,11 @@ import SongDetail from "./components/SongDetail/SongDetail";
 
 function App() {
   const audioRef = useRef(null);
+
   const onPlay = () => {
     audioRef.current.play();
   };
+
   const onPause = () => {
     audioRef.current.pause();
   };
@@ -18,12 +20,21 @@ function App() {
     audioRef.current.changeVolume(volume);
   };
 
+  const resetDuration = () => {
+    audioRef.current.resetDuration();
+  };
+
   return (
     <div className="App">
       <div className="container">
         <SongDetail />
         <ProgressArea ref={audioRef} />
-        <Controls play={onPlay} pause={onPause} changeVolume={changeVolume} />
+        <Controls
+          play={onPlay}
+          pause={onPause}
+          changeVolume={changeVolume}
+          resetDuration={resetDuration}
+        />
         <PlayList />
       </div>
     </div>

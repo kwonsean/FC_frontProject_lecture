@@ -1,4 +1,10 @@
-import { useRef, useImperativeHandle, forwardRef, useState } from "react";
+import {
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+  useState,
+  useCallback,
+} from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 import "./ProgressArea.scss";
@@ -14,7 +20,7 @@ function ProgressArea(props, ref) {
   const audio = useRef(null);
   const progressBarRef = useRef(null);
   const dispatch = useDispatch();
-  const { playList, currentIndex } = useSelector(
+  const { playList, currentIndex, repeat } = useSelector(
     (state) => state,
     shallowEqual,
   );
@@ -28,6 +34,9 @@ function ProgressArea(props, ref) {
     },
     changeVolume: (volume) => {
       audio.current.volume = volume;
+    },
+    resetDuration: () => {
+      audio.current.currentTime = 0;
     },
   }));
 
@@ -67,9 +76,14 @@ function ProgressArea(props, ref) {
     setDuration(changeTimeFormat(DT));
   };
 
-  const onEnded = () => {
-    dispatch(nextMusic());
-  };
+  // useSelect, state등의 값을 사용할 경우 최신의 값을 보장하기 위해 useCallback을 사용한다.
+  // dispatch는 안넣어도 상관 없지만 (어차피 변하지 않는다) 경고가 떠서 그냥 넣어준다(공식 홈페이지에서도 그냥 넣어도 상관없다고 함)
+  const onEnded = useCallback(() => {
+    if (repeat === "ONE") {
+      audio.current.currentTime = 0;
+      audio.current.play();
+    } else dispatch(nextMusic());
+  }, [dispatch, repeat]);
 
   return (
     <div className="progress-area" onMouseDown={onClickProgress}>

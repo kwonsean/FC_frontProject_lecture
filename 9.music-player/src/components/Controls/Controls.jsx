@@ -14,6 +14,7 @@ import {
   prevMusic,
   setRepeat,
 } from "../../store/musicPlayerReducer";
+import { useCallback } from "react";
 
 const RepeatButton = ({ repeat, ...props }) => {
   switch (repeat) {
@@ -56,13 +57,15 @@ const Controls = ({
     changeVolume(event.target.value);
   };
 
-  const onClickPrev = () => {
-    dispatch(prevMusic());
-  };
+  const onClickPrev = useCallback(() => {
+    if (repeat === "ONE") resetDuration();
+    else dispatch(prevMusic());
+  }, [dispatch, repeat, resetDuration]);
 
-  const onClickNext = () => {
-    dispatch(nextMusic());
-  };
+  const onClickNext = useCallback(() => {
+    if (repeat === "ONE") resetDuration();
+    else dispatch(nextMusic());
+  }, [dispatch, repeat, resetDuration]);
 
   const onClickRepeatBtn = () => {
     dispatch(setRepeat());
