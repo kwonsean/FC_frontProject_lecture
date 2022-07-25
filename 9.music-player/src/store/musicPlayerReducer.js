@@ -55,15 +55,25 @@ const initalState = {
   repeat: "ALL", // (ALL, ONE, SHUFFLE)
 };
 
+const repeatMode = ["ONE", "ALL", "SHUFFLE"];
 const PLAY_MUSIC = "musicPlayer/PLAY_MUSIC";
 const STOP_MUSIC = "musicPlayer/STOP_MUSIC";
 const NEXT_MUSIC = "musicPlayer/NEXT_MUSIC";
 const PREV_MUSIC = "musicPlayer/PREV_MUSIC";
+const SET_REPEAT = "musicPlayer/SET_REPEAT";
 
 export const playMusic = () => ({ type: PLAY_MUSIC });
 export const stopMusic = () => ({ type: STOP_MUSIC });
 export const nextMusic = () => ({ type: NEXT_MUSIC });
 export const prevMusic = () => ({ type: PREV_MUSIC });
+export const setRepeat = () => ({ type: SET_REPEAT });
+
+const getRandomNum = (arr, excludeNum) => {
+  const randomNum = Math.floor(Math.random() * arr.length);
+  return arr[randomNum] === excludeNum
+    ? getRandomNum(arr, excludeNum)
+    : arr[randomNum];
+};
 
 export default function musicPlayerReducer(state = initalState, action) {
   switch (action.type) {
@@ -80,7 +90,13 @@ export default function musicPlayerReducer(state = initalState, action) {
       };
     // 밑에 IDX값 구하는 로직 새롭다. (난 if만 생각해봄..)
     case NEXT_MUSIC:
-      const nextIdx = (state.currentIndex + 1) % state.playList.length;
+      const nextIdx =
+        state.repeat === "SHUFFLE"
+          ? getRandomNum(
+              Array.from(Array(playList.length).keys()),
+              state.currentIndex,
+            )
+          : (state.currentIndex + 1) % state.playList.length;
       return {
         ...state,
         currentIndex: nextIdx,
@@ -88,12 +104,25 @@ export default function musicPlayerReducer(state = initalState, action) {
       };
     case PREV_MUSIC:
       const prevIdx =
-        (state.currentIndex - 1 + state.playList.length) %
-        state.playList.length;
+        state.repeat === "SHUFFLE"
+          ? getRandomNum(
+              Array.from(Array(playList.length).keys()),
+              state.currentIndex,
+            )
+          : (state.currentIndex - 1 + state.playList.length) %
+            state.playList.length;
       return {
         ...state,
         currentIndex: prevIdx,
         currentMusicId: state.playList[prevIdx].id,
+      };
+    case SET_REPEAT:
+      return {
+        ...state,
+        repeat:
+          repeatMode[
+            (repeatMode.indexOf(state.repeat) + 1) % repeatMode.length
+          ],
       };
     default:
       return state;
