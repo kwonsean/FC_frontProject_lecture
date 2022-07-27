@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import "./App.scss";
 import Controls from "./components/Controls/Controls";
 import PlayList from "./components/PlayList/PlayList";
@@ -7,6 +7,7 @@ import SongDetail from "./components/SongDetail/SongDetail";
 
 function App() {
   const audioRef = useRef(null);
+  const [showPlayList, setShowPlayList] = useState(false);
 
   const onPlay = () => {
     audioRef.current.play();
@@ -34,8 +35,12 @@ function App() {
           pause={onPause}
           changeVolume={changeVolume}
           resetDuration={resetDuration}
+          showPlayList={() => setShowPlayList(true)}
         />
-        <PlayList />
+        <PlayList
+          showPlayList={showPlayList}
+          closePlayList={() => setShowPlayList(false)}
+        />
       </div>
     </div>
   );

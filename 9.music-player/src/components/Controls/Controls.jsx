@@ -34,8 +34,7 @@ const RepeatButton = ({ repeat, ...props }) => {
 };
 
 const Controls = ({
-  showMusicList,
-  setShowMusicList,
+  showPlayList,
   resetDuration,
   play,
   pause,
@@ -73,7 +72,10 @@ const Controls = ({
 
   return (
     <div className="control-area">
-      <QueueMusic sx={{ fontSize: 30, cursor: "pointer" }} />
+      <QueueMusic
+        sx={{ fontSize: 30, cursor: "pointer" }}
+        onClick={() => showPlayList()}
+      />
       <RepeatButton repeat={repeat} onClick={onClickRepeatBtn} />
 
       <SkipPrevious
