@@ -13,6 +13,7 @@ import {
   playMusic,
   stopMusic,
 } from "../../store/musicPlayerReducer";
+import { memo } from "react";
 
 function ProgressArea(props, ref) {
   const [currentTime, setCurrentTime] = useState("00:00");
@@ -40,31 +41,31 @@ function ProgressArea(props, ref) {
     },
   }));
 
-  const changeTimeFormat = (second) => {
+  const changeTimeFormat = useCallback((second) => {
     const min = String(parseInt(second / 60)).padStart(2, "0");
     const sec = String(parseInt(second % 60)).padStart(2, "0");
 
     return `${min}:${sec}`;
-  };
+  }, []);
 
   // TODO 파악 필요
-  const onClickProgress = (event) => {
+  const onClickProgress = useCallback((event) => {
     const progressBarWidth = event.currentTarget.clientWidth;
     const offsetX = event.nativeEvent.offsetX;
     const totalTime = audio.current.duration;
     // 현재 시간이 조절되니 onTimeUpdate가 실행됨
     audio.current.currentTime = (offsetX / progressBarWidth) * totalTime;
-  };
+  }, []);
 
-  const onPlay = () => {
+  const onPlay = useCallback(() => {
     dispatch(playMusic());
-  };
+  }, [dispatch]);
 
-  const onPause = () => {
+  const onPause = useCallback(() => {
     dispatch(stopMusic());
-  };
+  }, [dispatch]);
 
-  const onTimeUpdate = (event) => {
+  const onTimeUpdate = useCallback((event) => {
     // 재생 준비가 되지 않은 경우 리턴
     if (event.target.readyState === 0) return;
 
@@ -74,7 +75,7 @@ function ProgressArea(props, ref) {
 
     setCurrentTime(changeTimeFormat(CT));
     setDuration(changeTimeFormat(DT));
-  };
+  }, []);
 
   // useSelect, state등의 값을 사용할 경우 최신의 값을 보장하기 위해 useCallback을 사용한다.
   // dispatch는 안넣어도 상관 없지만 (어차피 변하지 않는다) 경고가 떠서 그냥 넣어준다(공식 홈페이지에서도 그냥 넣어도 상관없다고 함)
@@ -106,4 +107,4 @@ function ProgressArea(props, ref) {
   );
 }
 
-export default forwardRef(ProgressArea);
+export default memo(forwardRef(ProgressArea));

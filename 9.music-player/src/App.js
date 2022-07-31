@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "./App.scss";
 import Controls from "./components/Controls/Controls";
 import PlayList from "./components/PlayList/PlayList";
@@ -9,21 +9,21 @@ function App() {
   const audioRef = useRef(null);
   const [showPlayList, setShowPlayList] = useState(false);
 
-  const onPlay = () => {
+  const onPlay = useCallback(() => {
     audioRef.current.play();
-  };
+  }, []);
 
-  const onPause = () => {
+  const onPause = useCallback(() => {
     audioRef.current.pause();
-  };
+  }, []);
 
-  const changeVolume = (volume) => {
+  const changeVolume = useCallback((volume) => {
     audioRef.current.changeVolume(volume);
-  };
+  }, []);
 
-  const resetDuration = () => {
+  const resetDuration = useCallback(() => {
     audioRef.current.resetDuration();
-  };
+  }, []);
 
   return (
     <div className="App">

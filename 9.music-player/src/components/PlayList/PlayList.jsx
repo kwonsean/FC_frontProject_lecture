@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+import { memo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import QueueMusic from "@mui/icons-material/QueueMusic";
 import Close from "@mui/icons-material/Close";
@@ -13,17 +14,23 @@ const PlayList = ({ showPlayList, closePlayList }) => {
   const { playList } = useSelector((state) => state);
   const dispatch = useDispatch();
 
-  const renderItem = (item, index) => {
+  const renderItem = useCallback((item, index) => {
     <PlayListItem item={item} index={index} />;
-  };
+  }, []);
 
-  const onDropItem = (newPlayList) => {
-    dispatch(updatePlayList(newPlayList));
-  };
+  const onDropItem = useCallback(
+    (newPlayList) => {
+      dispatch(updatePlayList(newPlayList));
+    },
+    [dispatch],
+  );
 
-  const onClickItem = (index) => {
-    dispatch(setCurrentIdx(index));
-  };
+  const onClickItem = useCallback(
+    (index) => {
+      dispatch(setCurrentIdx(index));
+    },
+    [dispatch],
+  );
 
   return (
     <div className={classNames("play-list", { show: showPlayList })}>
@@ -54,4 +61,4 @@ const PlayList = ({ showPlayList, closePlayList }) => {
   );
 };
 
-export default PlayList;
+export default memo(PlayList);

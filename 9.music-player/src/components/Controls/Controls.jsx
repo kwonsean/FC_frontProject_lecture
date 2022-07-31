@@ -1,3 +1,4 @@
+import { memo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import RepeatOneIcon from "@mui/icons-material/RepeatOne";
@@ -14,9 +15,8 @@ import {
   prevMusic,
   setRepeat,
 } from "../../store/musicPlayerReducer";
-import { useCallback } from "react";
 
-const RepeatButton = ({ repeat, ...props }) => {
+const RepeatButton = memo(({ repeat, ...props }) => {
   switch (repeat) {
     case "ONE":
       return (
@@ -31,7 +31,7 @@ const RepeatButton = ({ repeat, ...props }) => {
     default:
       return null;
   }
-};
+});
 
 const Controls = ({
   showPlayList,
@@ -44,17 +44,20 @@ const Controls = ({
   const repeat = useSelector((state) => state.repeat);
   const dispatch = useDispatch();
 
-  const onClickPlay = () => {
+  const onClickPlay = useCallback(() => {
     play();
-  };
+  }, [play]);
 
-  const onClickPause = () => {
+  const onClickPause = useCallback(() => {
     pause();
-  };
+  }, [pause]);
 
-  const onChangeVolume = (event) => {
-    changeVolume(event.target.value);
-  };
+  const onChangeVolume = useCallback(
+    (event) => {
+      changeVolume(event.target.value);
+    },
+    [changeVolume],
+  );
 
   const onClickPrev = useCallback(() => {
     if (repeat === "ONE") resetDuration();
@@ -66,9 +69,9 @@ const Controls = ({
     else dispatch(nextMusic());
   }, [dispatch, repeat, resetDuration]);
 
-  const onClickRepeatBtn = () => {
+  const onClickRepeatBtn = useCallback(() => {
     dispatch(setRepeat());
-  };
+  }, [dispatch]);
 
   return (
     <div className="control-area">
@@ -114,4 +117,4 @@ const Controls = ({
   );
 };
 
-export default Controls;
+export default memo(Controls);
