@@ -12,3 +12,9 @@
 ### forwardRef
 
 ### useImperativeHandle
+
+### findIndex()
+
+- 주어진 판별 함수를 만족하는 배열의 첫 번째 요소에 대한 인덱스를 반환
+- 없으면 -1 반환
+- [MDN 공식문서](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex)

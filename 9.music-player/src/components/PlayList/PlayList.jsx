@@ -6,7 +6,7 @@ import classNames from "classnames";
 import "./PlayList.scss";
 import PlayListItem from "./PlayListItem";
 import SortableList from "@ksh96/sortable-list";
-import { setCurrentIdx } from "../../store/musicPlayerReducer";
+import { setCurrentIdx, updatePlayList } from "../../store/musicPlayerReducer";
 import MusicList from "../../store/data";
 
 const PlayList = ({ showPlayList, closePlayList }) => {
@@ -15,6 +15,10 @@ const PlayList = ({ showPlayList, closePlayList }) => {
 
   const renderItem = (item, index) => {
     <PlayListItem item={item} index={index} />;
+  };
+
+  const onDropItem = (newPlayList) => {
+    dispatch(updatePlayList(newPlayList));
   };
 
   const onClickItem = (index) => {
@@ -42,6 +46,7 @@ const PlayList = ({ showPlayList, closePlayList }) => {
       </ul>
       {/* <SortableList
         data={playList}
+        onDropItem={onDropItem}
         renderItem={renderItem}
         onClickItem={onClickItem}
       /> */}
